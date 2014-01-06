@@ -1,0 +1,3 @@
+[13-Dec-2013 09:23:49 Europe/Bucharest] PHP Warning:  session_start(): Cannot send session cache limiter - headers already sent (output started at /home/deepskie/public_html/php/dbPDO.php:2) in /home/deepskie/public_html/search-results.php on line 3
+[13-Dec-2013 09:23:54 Europe/Bucharest] PHP Warning:  session_start(): Cannot send session cache limiter - headers already sent (output started at /home/deepskie/public_html/php/dbPDO.php:2) in /home/deepskie/public_html/search-results.php on line 3
+[13-Dec-2013 09:23:59 Europe/Bucharest] PHP Warning:  session_start(): Cannot send session cache limiter - headers already sent (output started at /home/deepskie/public_html/php/dbPDO.php:2) in /home/deepskie/public_html/search-results.php on line 3

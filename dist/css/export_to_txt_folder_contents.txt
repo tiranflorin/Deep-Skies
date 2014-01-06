@@ -1,0 +1,4 @@
+export to a .txt the contents of a folder:
+
+
+dir /B name.txt

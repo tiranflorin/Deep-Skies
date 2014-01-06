@@ -1,0 +1,4 @@
+/ngcPics/*
+/.idea/*
+/php/DbPdo.php
+/php/DbPdoBase.php
