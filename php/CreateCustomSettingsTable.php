@@ -124,19 +124,41 @@ class CreateCustomSettingsTable extends AbstractSettings
 
     private function _run($sDate)
     {
+        //save computing time: limit the nb of objects for which we'll calculate alt-az coordinates:
+        $sTableName = "object_tmp";
+
+        //create object_tmp
+        $this->_createTmpObjectTable();
+
+        //eliminate circumpolar south objects:
+        $desiredDeclination = - $this->_dCustomLat;
+        $insert = "
+        INSERT INTO `{$this->_sDbName}`.`{$sTableName}`
+        SELECT
+          *
+        FROM `{$this->_sDbName}`.`object`
+        WHERE dec_float > {$desiredDeclination}
+        ";
+
+        $this->_dbHandle->exec($insert);
+
+
+
         $iLat = round($this->_dCustomLat);
         $iLong = round($this->_dCustomLong);
         $this->_sTableName = "temp__custom_visibleobjectsfor_" . date('Ymd', strtotime($sDate)) . $iLat . $iLong;
 
+        //create visible objects table:
+        $this->_createTable($this->_sTableName);
 
-        $check = $this->_checkIfTableAlreadyExists($this->_sTableName);
+        //calculate objects visible at interval 1:
+        $this->_populateTable($this->_sTableName, $this->_dCustomLat, $this->_dCustomLong, $this->_sCustomCreation);
 
-        if (!empty($check)) {
-            //echo "Table <strong> $this->_sTableName </strong> already exists.<br/>";
-        } else {
-            $this->_createTable($this->_sTableName);
-            $this->_populateTable($this->_sTableName, $this->_dCustomLat, $this->_dCustomLong, $this->_sCustomCreation);
-        }
+        //calculate objects visible at interval 2:
+        $this->_populateTable($this->_sTableName, $this->_dCustomLat, $this->_dCustomLong, '2014-01-14 04:00:00');
+
+        //drop object_tmp table if it is no longer needed:
+        $this->_dbHandle->exec("DROP TABLE IF EXISTS `{$this->_sDbName}`.`{$sTableName}`");
 
     }
 
