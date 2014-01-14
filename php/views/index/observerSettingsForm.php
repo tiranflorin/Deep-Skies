@@ -32,14 +32,21 @@
     </div>
 </div>
 <div class="col-lg-2 col-sm-6 col-xs-6">
-    <div class="form-group custom-padding" id="form-group-time">
-        <label for="user_time" class=" control-label">Time:</label>
-        <input type="text" name="user_time" class="form-control" id="user_time" placeholder="23:20:00"
+    <div class="form-group custom-padding" id="form-group-time1">
+        <label for="user_time" class=" control-label">Time start:</label>
+        <input type="text" name="user_time1" class="form-control" id="user_time1" placeholder="23:20:00"
+               title="Please use this format: hh:mm:ss">
+    </div>
+</div>
+<div class="col-lg-2 col-sm-6 col-xs-6">
+    <div class="form-group custom-padding" id="form-group-time2">
+        <label for="user_time" class=" control-label">Time end:</label>
+        <input type="text" name="user_time2" class="form-control" id="user_time2" placeholder="03:10:00"
                title="Please use this format: hh:mm:ss">
     </div>
 </div>
 
-<div class="col-lg-8 col-sm-12 col-xs-12">
+<div class="col-lg-6 col-sm-12 col-xs-12">
 <div class="form-group">
 <label for="timezone" class="control-label">Timezone:</label>
 
@@ -320,7 +327,8 @@
         <div class="row alert alert-danger" id="latError"></div>
         <div class="row alert alert-danger" id="longError"></div>
         <div class="row alert alert-danger" id="dateError"></div>
-        <div class="row alert alert-danger" id="timeError"></div>
+        <div class="row alert alert-danger" id="timeError1"></div>
+        <div class="row alert alert-danger" id="timeError2"></div>
         <div class="row alert alert-danger" id="emptyError"></div>
         <div class="row alert alert-danger" id="fatalError"></div>
 

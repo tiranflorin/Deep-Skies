@@ -6,8 +6,10 @@ class CreateCustomSettingsTable extends AbstractSettings
     private $_dCustomLat;
     private $_dCustomLong;
     private $_sDate;
-    private $_sTime;
-    private $_sCustomCreation;
+    private $_sTime1;
+    private $_sTime2;
+    private $_sCustomCreation1;
+    private $_sCustomCreation2;
     private $_iTimeZone;
     private $_sTableName;
 
@@ -16,23 +18,30 @@ class CreateCustomSettingsTable extends AbstractSettings
         parent::__construct();
 
         if (!empty($_POST['latitude']) && !empty($_POST['longitude']) && !empty($_POST['timezone'])
-            && !empty($_POST['user_date']) && !empty($_POST['user_time'])
+            && !empty($_POST['user_date']) && !empty($_POST['user_time1']) && !empty($_POST['user_time2'])
         ) {
             $aErrors = array(
                 'errorLat' => 'no_errors',
                 'errorLong' => 'no_errors',
                 'errorDate' => 'no_errors',
-                'errorTime' => 'no_errors',
+                'errorTime1' => 'no_errors',
+                'errorTime2' => 'no_errors',
                 'errorEmpty' => 'no_errors',
                 'errorFatal' => 'no_errors'
             );
             $sRegexTime = '/^([01]?[0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9]/';
 
             //preg_match('#^[01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$#', $time);
-            if (preg_match($sRegexTime, $_POST['user_time']) === 1) {
-                $this->_sTime = $_POST['user_time']; //further escaping here
+            if (preg_match($sRegexTime, $_POST['user_time1']) === 1) {
+                $this->_sTime1 = $_POST['user_time1']; //further escaping here
             } else {
-                $aErrors['errorTime'] = 'Time format not respected.';
+                $aErrors['errorTime1'] = 'Start time format not respected.';
+            }
+
+            if (preg_match($sRegexTime, $_POST['user_time2']) === 1) {
+                $this->_sTime2 = $_POST['user_time2']; //further escaping here
+            } else {
+                $aErrors['errorTime2'] = 'End time format not respected.';
             }
 
             if ($this->_isValidDate($_POST['user_date']) === true) {
@@ -56,15 +65,33 @@ class CreateCustomSettingsTable extends AbstractSettings
 
             $this->_iTimeZone = $_POST['timezone'];
 
-            $this->_sCustomCreation = $this->_sDate . ' ' . $this->_sTime;
+            $this->_sCustomCreation1 = $this->_sDate . ' ' . $this->_sTime1;
+
+            //custom creation can have a different date.
+            //the next day for example.
+            $timeToday1 = $this->_sDate . ' ' . $this->_sTime1;
+            $timeToday2 = $this->_sDate . ' 23:59:59';
+            $time3 = $this->_sDate . ' ' . $this->_sTime2;
+            $unixTime1 = strtotime($timeToday1);
+            $unixTime2 = strtotime($timeToday2);
+            $unixTime3 = strtotime($time3);
+            if (($unixTime3 < $unixTime1 ) && $unixTime3 < $unixTime2 ) {
+                //$tomorrow = date('DAY +1', strtotime($this->_sDate));
+                $datetime = new DateTime('tomorrow');
+                $tomorrow =  $datetime->format('Y-m-d');
+                $this->_sCustomCreation2 = $tomorrow . ' ' . $this->_sTime2;
+            } else {
+                $this->_sCustomCreation2 = $this->_sDate . ' ' . $this->_sTime2;
+            }
+
 
             $this->_run($this->_sDate);
 
             $aPlaceName = $this->_getPlaceName($this->_dCustomLat, $this->_dCustomLong);
 
             if (($aErrors['errorLat'] == 'no_errors') && ($aErrors['errorLat'] == 'no_errors') &&
-                ($aErrors['errorDate'] == 'no_errors') && ($aErrors['errorTime'] == 'no_errors') &&
-                ($aPlaceName->status == 'ZERO_RESULTS')) {
+                ($aErrors['errorDate'] == 'no_errors') && ($aErrors['errorTime1'] == 'no_errors') &&
+                ($aErrors['errorTime2'] == 'no_errors') &&($aPlaceName->status == 'ZERO_RESULTS')) {
                 $aErrors['errorFatal'] = 'Unable to find your location and calculate visible objects
                 for current settings. Please change/recheck more carefully your coordinates.';
             }
@@ -92,7 +119,8 @@ class CreateCustomSettingsTable extends AbstractSettings
                 $_SESSION['boolCustomSettings'] = true;
 
                 $_SESSION['customSettings']['location'] = $sLocation;
-                $_SESSION['customSettings']['datetime'] = $this->_sCustomCreation;
+                $_SESSION['customSettings']['datetime1'] = $this->_sCustomCreation1;
+                $_SESSION['customSettings']['datetime2'] = $this->_sCustomCreation2;
                 $_SESSION['customSettings']['timezone'] = $sTimeZone;
 
                 $_SESSION['tempVisibleObjectsTable'] = $this->_sTableName;
@@ -100,7 +128,8 @@ class CreateCustomSettingsTable extends AbstractSettings
                 $aSettings = array(
                     'errorFlag' => 'no_errors',
                     'location' => $sLocation,
-                    'datetime' => $this->_sCustomCreation,
+                    'datetime1' => $this->_sCustomCreation1,
+                    'datetime2' => $this->_sCustomCreation2,
                     'timezone' => $sTimeZone
                 );
                 echo json_encode($aSettings);
@@ -114,7 +143,8 @@ class CreateCustomSettingsTable extends AbstractSettings
                 'errorLat' => 'no_errors',
                 'errorLong' => 'no_errors',
                 'errorDate' => 'no_errors',
-                'errorTime' => 'no_errors',
+                'errorTime1' => 'no_errors',
+                'errorTime2' => 'no_errors',
                 'errorFatal' => 'no_errors',
                 'errorEmpty' => 'At least one field was empty. Please note that all fields are mandatory.'
             );
@@ -152,10 +182,10 @@ class CreateCustomSettingsTable extends AbstractSettings
         $this->_createTable($this->_sTableName);
 
         //calculate objects visible at interval 1:
-        $this->_populateTable($this->_sTableName, $this->_dCustomLat, $this->_dCustomLong, $this->_sCustomCreation);
+        $this->_populateTable($this->_sTableName, $this->_dCustomLat, $this->_dCustomLong, $this->_sCustomCreation1);
 
         //calculate objects visible at interval 2:
-        $this->_populateTable($this->_sTableName, $this->_dCustomLat, $this->_dCustomLong, '2014-01-14 04:00:00');
+        $this->_populateTable($this->_sTableName, $this->_dCustomLat, $this->_dCustomLong, $this->_sCustomCreation2);
 
         //drop object_tmp table if it is no longer needed:
         $this->_dbHandle->exec("DROP TABLE IF EXISTS `{$this->_sDbName}`.`{$sTableName}`");

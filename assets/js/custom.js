@@ -1,7 +1,8 @@
 $("#latError").hide();
 $("#longError").hide();
 $("#dateError").hide();
-$("#timeError").hide();
+$("#timeError1").hide();
+$("#timeError2").hide();
 $("#emptyError").hide();
 $("#fatalError").hide();
 
@@ -19,7 +20,7 @@ $("#saveLocationButtonId").click(function() {
             if(obj.errorFlag == 'no_errors'){
                 $('#setObserverSettings').css('display','none');
                 $('#smallObserverSettings').html('(Custom Settings)');
-                $('#detailedObserverSettings').html('<p>Location: '+obj.location +'</p><p>Date time: ' + obj.datetime+'</p><p>Timezone: '+obj.timezone+'</p>');
+                $('#detailedObserverSettings').html('<p>Location: '+obj.location +'</p><p>Time interval: ' + obj.datetime1+' <> ' + obj.datetime2+' </p><p><small>(*Note: Objects visible between this interval.) </small></p><p>Timezone: '+obj.timezone+'</p>');
                 $('#observerLocation').modal('show');
 
                 hideErrorHighlightedZones();
@@ -43,10 +44,15 @@ $("#saveLocationButtonId").click(function() {
                     $("#dateError").html('<p> '+obj.errorDate +'</p>');
                     $("#dateError").show();
                 }
-                if(obj.errorTime != 'no_errors'){
-                    $('#form-group-time').addClass('has-error');
-                    $("#timeError").html('<p>'+obj.errorTime +'</p>');
-                    $("#timeError").show();
+                if(obj.errorTime1 != 'no_errors'){
+                    $('#form-group-time1').addClass('has-error');
+                    $("#timeError1").html('<p>'+obj.errorTime1 +'</p>');
+                    $("#timeError1").show();
+                }
+                if(obj.errorTime2 != 'no_errors'){
+                    $('#form-group-time2').addClass('has-error');
+                    $("#timeError2").html('<p>'+obj.errorTime2 +'</p>');
+                    $("#timeError2").show();
                 }
                 if(obj.errorEmpty != 'no_errors'){
                     $("#emptyError").html('<p>'+obj.errorEmpty +'</p>');
@@ -65,7 +71,8 @@ $("#saveLocationButtonId").click(function() {
         $("#latError").hide();
         $("#longError").hide();
         $("#dateError").hide();
-        $("#timeError").hide();
+        $("#timeError1").hide();
+        $("#timeError2").hide();
         $("#emptyError").hide();
         $("#fatalError").hide();
 
@@ -89,10 +96,16 @@ $("#saveLocationButtonId").click(function() {
             $('#form-group-date').removeClass('has-error');
         }
 
-        var clsName = $("#form-group-time").attr('class');
+        var clsName = $("#form-group-time1").attr('class');
         var number = clsName.indexOf("has-error");
         if(number !== -1){
-            $('#form-group-time').removeClass('has-error');
+            $('#form-group-time1').removeClass('has-error');
+        }
+
+        var clsName = $("#form-group-time2").attr('class');
+        var number = clsName.indexOf("has-error");
+        if(number !== -1){
+            $('#form-group-time2').removeClass('has-error');
         }
     }
 
@@ -208,48 +221,7 @@ $(function(){
             links = this.getElementsByTagName('a');
           blueimp.Gallery(links, options);
         });
-})
-
-/*
-$(function(){
-        $('#displayGrid').click(function(event){
-          event.preventDefault();
-          $('#displayList').removeClass('active');
-          $(this).addClass('active');
-          $('#displayResults > div.col-lg-12').removeClass('col-lg-12').addClass('col-lg-4');
-          $('#displayResults .objThumb').removeClass('pull-left');
-          $('#displayResults .objConst').removeClass('col-lg-3').addClass('col-lg-12');
-          $('#displayResults .objType').removeClass('col-lg-2').addClass('col-lg-12');
-          $('#displayResults .objMag').removeClass('col-lg-2').addClass('col-lg-12');
-          $('#displayResults .objMinSize').removeClass('col-lg-2').addClass('col-lg-12');
-          $('#displayResults .objMaxSize').removeClass('col-lg-3').addClass('col-lg-12');
-          $('#displayResults .objAlt').removeClass('col-lg-2').addClass('col-lg-12');
-          $('#displayResults .objAzimuth').removeClass('col-lg-2').addClass('col-lg-12');
-          $('#displayResults .objNgcDesc').removeClass('col-lg-4').addClass('col-lg-12');
-          $('#displayResults .objOtherNotes').removeClass('col-lg-4').addClass('col-lg-12');
-        });
-})
-
-
-$(function(){
-        $('#displayList').click(function(event){
-          event.preventDefault();
-          $('#displayGrid').removeClass('active');
-          $(this).addClass('active');
-          $('#displayResults > div.col-lg-4').removeClass('col-lg-4').addClass('col-lg-12');
-          $('#displayResults .objThumb').removeClass('pull-left');
-          $('#displayResults .objConst').removeClass('col-lg-12').addClass('col-lg-3');
-          $('#displayResults .objType').removeClass('col-lg-12').addClass('col-lg-2');
-          $('#displayResults .objMag').removeClass('col-lg-12').addClass('col-lg-2');
-          $('#displayResults .objMinSize').removeClass('col-lg-12').addClass('col-lg-2');
-          $('#displayResults .objMaxSize').removeClass('col-lg-12').addClass('col-lg-3');
-          $('#displayResults .objAlt').removeClass('col-lg-12').addClass('col-lg-2');
-          $('#displayResults .objAzimuth').removeClass('col-lg-12').addClass('col-lg-2');
-          $('#displayResults .objNgcDesc').removeClass('col-lg-12').addClass('col-lg-4');
-          $('#displayResults .objOtherNotes').removeClass('col-lg-12').addClass('col-lg-4');
-        });
-})
-*/
+});
 
 
 $(function(){

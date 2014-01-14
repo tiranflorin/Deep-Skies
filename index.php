@@ -24,12 +24,14 @@ if (!isset($_SESSION['boolCustomSettings']) || $_SESSION['boolCustomSettings'] =
 
     $currentSettings = 'Custom Settings';
     $location = $_SESSION['customSettings']['location'];
-    $datetime = $_SESSION['customSettings']['datetime'];
+    $datetime1 = $_SESSION['customSettings']['datetime1'];
+    $datetime2 = $_SESSION['customSettings']['datetime2'];
     $timezone = $_SESSION['customSettings']['timezone'];
 
     $aSettings[0] = "<p>Location: $location</p>";
-    $aSettings[1] = "<p>Date: $datetime</p>";
-    $aSettings[2] = "<p>Timezone: $timezone</p>";
+    $aSettings[1] = "<p>Time interval: $datetime1  <> $datetime2</p>";
+    $aSettings[2] = "<p><small>(*Note: Objects visible between this interval.) </small></p>";
+    $aSettings[3] = "<p>Timezone: $timezone</p>";
 }
 
 if(isset($_POST['user_date'])){
